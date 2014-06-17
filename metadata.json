@@ -1,0 +1,17 @@
+{
+  "name": "lgbarn-samba",
+  "version": "0.1.0",
+  "author": "lgbarn",
+  "summary": "Module used to manage Samba config file and shares",
+  "license": "Apache 2.0",
+  "source": "https://github.com/lgbarn/samba",
+  "project_page": "https://github.com/lgbarn/samba",
+  "issues_url": "https://github.com/lgbarn/samba/issues",
+  "dependencies": [
+    {
+      "version_range": ">= 1.0.0",
+      "name": "puppetlabs-stdlib"
+    }
+  ]
+}
+
