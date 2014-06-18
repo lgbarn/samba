@@ -1,0 +1,514 @@
+# This is the main Samba configuration file. You should read the
+# smb.conf(5) manual page in order to understand the options listed
+# here. Samba has a huge number of configurable options (perhaps too
+# many!) most of which are not shown in this example.
+#
+# Any line which starts with a ; (semi-colon) or a # (hash) 
+# is a comment and is ignored. In this example we will use a #
+# for commentry and a ; for parts of the config file that you
+# may wish to enable.
+#
+# NOTE: Whenever you modify this file you should run the command "testparm"
+# to check that you have not many any basic syntactic errors. 
+#
+#======================= Global Settings =====================================
+[global]
+
+# Netbios name of this machine
+<% if @netbios_name -%>
+   netbios name = <%= @netbios_name %>
+<% else -%>
+   ;netbios name = 
+<% end -%>
+<% if @password_server -%>
+   password server = <%= @password_server %>
+<% else -%>
+   ;password server =
+<% end -%>
+
+#======================= Global Settings =====================================
+
+# workgroup = NT-Domain-Name or Workgroup-Name, eg: REDHAT4
+<% if @workgroup -%>
+   workgroup = <%= @workgroup %>
+<% else -%>
+   ;workgroup = 
+<% end -%>
+
+# Kerberos Realm name for the AD 
+<% if @realm -%>
+   realm = <%= @realm %>
+<% else -%>
+   ;realm = 
+<% end -%>
+
+# server string is the equivalent of the NT Description field
+<% if @server_string -%>
+   server string = <%= @server_string %>
+<% else -%>
+   ;server string = 
+<% end -%>
+
+# this tells Samba to use a separate log file for each machine
+# that connects
+<% if @log_file -%>
+   log file = <%= @log_file %>
+<% else -%>
+   ;log file = 
+<% end -%>
+   #log file = /var/log/samba/activity.log
+
+# Put a capping on the size of the log files (in Kb).
+<% if @max_log_size -%>
+   max log size = <%= @max_log_size %>
+<% else -%>
+   ;max log size = 
+<% end -%>
+
+# Security mode. Use 'ads' for configuring with W2K domain and 
+# use Kerberos as authentication protocol.
+<% if @security -%>
+   security = <%= @security %>
+<% else -%>
+   ;security = 
+<% end -%>
+
+# Most people will find that this option gives better performance.
+# See speed.txt and the manual pages for details
+<% if @socket_options -%>
+   socket options = <%= @socket_options %>
+<% else -%>
+   ;socket options = 
+<% end -%>
+
+# You may wish to use password encryption. Please read
+# ENCRYPTION.txt, Win95.txt and WinNT.txt in the Samba documentation.
+# Do not enable this option unless you have read those documents
+<% if @encryt_passwords -%>
+  encrypt passwords = <%= @encryt_passwords %>
+<% else -%>
+  ;encrypt passwords = 
+<% end -%>
+
+# Browser Control Options:
+# set local master to no if you don't want Samba to become a master
+# browser on your network. Otherwise the normal election rules apply
+<% if @local_master -%>
+   local master = <%= @local_master %>
+<% else -%>
+   ;local master = 
+<% end -%>
+
+# This option is important for security. It allows you to restrict
+# connections to machines which are on your local network. The
+# following example restricts access to two C class networks and
+# the "loopback" interface. For more examples of the syntax see
+# the smb.conf man page
+<% if @hosts_allow -%>
+   hosts allow = <%= @hosts_allow %>
+<% else -%>
+   ;hosts allow = 
+<% end -%>
+
+# Unix users can map to different SMB User names which is specified 
+# by smbusers.map.
+<% if @username_map -%>
+  username map = <%= @username_map %>
+<% else -%>
+  ;username map = 
+<% end -%>
+
+# Most people will find that this option gives better performance.
+# See speed.txt and the manual pages for details.
+<% if @socket_options -%>
+   socket options = <%= @socket_options %>
+<% else -%>
+   ;socket options = 
+<% end -%>
+
+# Windows Internet Name Serving Support Section:
+# WINS Support - Tells the NMBD component of Samba to enable it's WINS Server.
+<% if @wins_support -%>
+   wins support = <%= @wins_support %>
+<% else -%>
+   ;wins support = 
+<% end -%>
+
+# WINS Server - Tells the NMBD components of Samba to be a WINS Client used to 
+# locate password servers, specified as a fully-qualified DNS name or an IP 
+# address.
+# Note: Samba can be either a WINS Server, or a WINS Client, but NOT both.
+<% if @wins_server -%>
+   wins server = <%= @wins_server %>
+<% else -%>
+   ;wins server = 
+<% end -%>
+
+# Case Preservation can be handy - system default is _no_.
+# NOTE: These can be set on a per share basis.
+<% if @preserve_case -%>
+   preserve case = <%= @preserve_case %>
+<% else -%>
+   ;preserve case = 
+<% end -%>
+<% if @short_preserve_case -%>
+   short preserve case = <%= @short_preserve_case %>
+<% else -%>
+   ;short preserve case =
+<% end -%>
+
+locking = no
+create mask = 0664
+directory mask = 0775
+load printers = no
+browseable = yes
+force group = nfs_users
+log level = 10 vfs:0
+#log level = 2 vfs:0
+# NS-971459
+guest account = nobody
+restrict anonymous = 1
+# Winbind
+winbind use default domain = yes
+allow trusted domains = no
+invalid users = root
+## separate domain and username (default is '\', like DOMAIN\username)
+winbind separator = .
+## use uids from 10000 to 20000 for domain users
+idmap uid = 10000-20000
+## use gids from 10000 to 20000 for domain groups
+idmap gid = 10000-20000 
+## allow enumeration of winbind users and groups
+winbind enum users = yes
+winbind enum groups = yes
+template homedir = /tmp
+#
+### Templates used in other shares go first ###############
+# Add more templates or override as needed  ###############
+[prod_4support]
+	read list = @access_it_app_admin,@access_it_ops_unix,@access_it_application_support,@unix_db_team,@access_it_qa,@access_it_rm_serviceops,@access_fin_bi_pm,@fs_samba_prod_app_ro,@fs_samba_prod_app_full,@IT-ApplicationSupport
+	available = no
+[nonprod]
+   valid users = @access_it_app_admin, @access_it_ops_unix, @access_it_application_support, @unix_db_team, @access_it_qa, @access_it_application_development, @access_it_rm_serviceops, @access_benefits_management_group, @access_serviceops_benefits_support, @fs_samba_nonprod_app_ro, @fs_samba_nonprod_app_full, @IT-ApplicationSupport
+   writable = no
+   available = no
+[dev]
+	follow symlinks = yes
+	read list = @access_it_ops_unix,@access_it_application_development,@access_it_app_admin,@sw-tacticals
+	available = no
+[prod_4dev]
+	copy = dev
+	vfs objects = extd_audit
+	read list = @access_it_ops_unix,@access_it_application_development,@access_it_app_admin,@sw-tacticals
+	valid users = 
+	available = no
+   # This share is audited
+### Shares #################################################
+[audit_logs]
+	comment = Special access to samba logs
+	valid users = @FS_Samba_AllAccess
+	browsable = yes
+	path = /var/log/samba
+	force group = sambaLogs
+[prod_shared]
+   comment = /apps/psoft/data and /apps/psoft/psreports for PROD
+   path = /nfs/prod/shared
+#new   read list = @FS_Samba_AllAccess , @IT-Tier2-Support, @IT-ApplicationSupport 
+   valid users = @access_it_app_admin,@access_it_ops_unix,@access_it_application_support,@unix_db_team,@access_it_qa,@access_it_rm_serviceops,@access_fin_bi_pm,@fs_samba_prod_app_ro,@fs_samba_prod_app_full,@IT-ApplicationSupport
+[nonprod_shared]
+	copy = nonprod
+	comment = /apps/psoft/data and /apps/psoft/psreports for QA/STAGER
+	valid users = @access_it_app_admin,@access_it_ops_unix,@access_it_application_support,@unix_db_team,@access_it_qa,@access_it_application_development,@access_it_rm_serviceops,@access_benefits_management_group,@access_serviceops_benefits_support,@fs_samba_nonprod_app_ro,@fs_samba_nonprod_app_full,@IT-ApplicationSupport
+	writeable = no
+	path = /nfs/nonprod/shared
+	available = yes
+[nonprod_b2b]
+	vfs objects = extd_audit
+	write list = @FS_Samba_AllAccess,@FS_Samba_non_Prod_B2B_Full,@SW-tacticals,@QE-ALL
+	path = /nfs/nonprod/app/b2b
+	force group = psoft
+	force user = psoft
+	comment = nonprod app server access for ps_output/b2b
+	valid users = @access_it_application_support,@unix_db_team,@access_it_qa,@access_it_application_development,@access_it_rm_serviceops,@access_benefits_management_group,@access_serviceops_benefits_support,@fs_samba_nonprod_app_ro,@fs_samba_nonprod_app_full,@fs_samba_nonprod_app_ro,@fs_samba_nonprod_app_full,@FS_Samba_non_Prod_B2B_RO,@FS_Samba_non_Prod_B2B_Full,@QE-ALL,@FS_Samba_AllAccess,@FS_Samba_non_Prod_B2B_Full,@SW-tacticals
+	available = yes
+#	writeable = no
+   # This share is audited
+[nonprod_trinet]
+   comment = nonprod app server access for ps_output/trinet
+   path = /nfs/nonprod/app/trinet
+	valid users = @access_it_application_support,@unix_db_team,@access_it_qa,@access_it_application_development,@access_it_rm_serviceops,@access_benefits_management_group,@access_serviceops_benefits_support,@fs_samba_nonprod_app_ro,@fs_samba_nonprod_app_full,@fs_samba_nonprod_app_ro,@fs_samba_nonprod_app_full,@FS_Samba_non_Prod_B2B_RO,@FS_Samba_non_Prod_B2B_Full,@QE-ALL,@FS_Samba_AllAccess,@FS_Samba_non_Prod_B2B_Full,@SW-tacticals,@serviceops-tmt
+   writable = yes
+   write list = @FS_Samba_AllAccess,@serviceops-tmt
+   force user = psoft
+   force group = psoft
+   writable = yes
+#[nonprod_odr]
+#   comment = nonprod app server access for ps_output/odr
+#   path = /nfs/nonprod/app/odr
+#   writable = yes
+#   write list = @FS_Samba_AllAccess, @IT-RM.Group, @IT-Tier2-Support, @IT-Tacticals, @IT-ApplicationSupport, @FIN-RiskOperations
+#   valid users = @QE-ALL
+#   force user = psoft
+#   force group = psoft
+[nonprod_ps_output_db]
+   comment = nonprod app server access for database directories under ps_output
+   path = /nfs/nonprod/app/ps_output_db
+   valid users = @FS_Samba_AllAccess, @QE-ALL, @it-appdevpeoplesoft
+   writable = no
+   write list = @FS_Samba_AllAccess
+   force user = psoft
+   force group = psoft
+[nonprod_ps_input]
+	vfs objects = extd_audit
+	valid users = @access_it_application_support,@unix_db_team,@access_it_qa,@access_it_application_development,@access_it_rm_serviceops,@access_benefits_management_group,@access_serviceops_benefits_support,@fs_samba_nonprod_app_ro,@fs_samba_nonprod_app_ro,@fs_samba_nonprod_app_full,@FS_Samba_non_Prod_ps_input,@QE-ALL,@FS_Samba_AllAccess,@FS_Samba_non_Prod_ps_input_Full,@ServiceOps-TMT,@access_finance_payroll_tax_leadership,@fs_samba_nonprod_app_full,@fs_samba_prod_app_full,@FIN-PayrollTax,@serviceops-tmt,@it-appdevpeoplesoft 
+	writeable = no
+	write list = @FS_Samba_AllAccess,@FS_Samba_non_Prod_ps_input_Full,@ServiceOps-TMT,@access_finance_payroll_tax_leadership,@fs_samba_nonprod_app_full,@fs_samba_prod_app_full,@FIN-PayrollTax,@serviceops-tmt,@QE-ALL,@it-appdevpeoplesoft
+	path = /nfs/nonprod/app/ps_input
+	force group = psoft
+	force user = psoft
+	comment = nonprod app server access for ps_input
+	available = yes
+   # This share is audited
+[nonprod_app_homes]
+	comment = nonprod pt851 home access for Application Support Teams
+	valid users = @access_it_application_support,@access_it_qa,@access_it_application_development,@access_it_rm_serviceops,@access_benefits_management_group,@access_serviceops_benefits_support,@fs_samba_nonprod_app_ro,@fs_samba_nonprod_app_full,@IT-ApplicationSupport,@QE-ALL,@fs_samba_allaccess,@it-appdevcrm
+        writeable = no
+	path = /nfs/nonprod/app_home
+[prod_b2b]
+	vfs objects = extd_audit
+	valid users = @access_it_qa,@access_it_rm_serviceops,@access_fin_bi_pm,@fs_samba_prod_app_ro,@fs_samba_prod_app_full,@FS_Samba_Prod_B2B_RO,@QE-ALL,@FS_Samba_AllAccess,@FS_Samba_Prod_B2B_Full,@access_it_application_support,@IT-ApplicationSupport,@fin-benefits,@SW-tacticals,@fin-riskoperations
+        writeable = no
+	write list = @FS_Samba_AllAccess,@FS_Samba_Prod_B2B_Full,@access_it_application_support,@IT-ApplicationSupport,@fin-benefits,@fin-riskoperations
+	path = /nfs/prod/app/b2b
+	force group = psoft
+	force user = psoft
+	comment = PROD app server access for ps_output/b2b
+	available = yes
+   # This share is audited
+[prod_trinet]
+   comment = prod app server access for ps_output/trinet
+   valid users = @FS_Samba_AllAccess, @IT-Tier2-Support, @IT-ApplicationSupport, @serviceops-tmt
+   path = /nfs/prod/app/trinet
+   writable = yes
+   write list = @FS_Samba_AllAccess, @IT-Tier2-Support, @IT-ApplicationSupport, @serviceops-tmt
+   force user = psoft
+   force group = psoft
+   # This share is audited
+   vfs objects = extd_audit
+[prod_odr]
+   comment = prod app server access for ps_output/odr
+   path = /nfs/prod/app/odr
+   writable = yes
+   write list = @FS_Samba_AllAccess, @IT-RM.Group, @IT-Tier2-Support, @IT-Tacticals, @IT-ApplicationSupport, @FIN-RiskOperations
+   force user = psoft
+   force group = psoft
+   # This share is audited
+   vfs objects = extd_audit
+[prod_b2b_rm_NewClient]
+   comment = RM access for ps_output/b2b/RiskMgmt/NewClient
+   path = /nfs/prod/app/b2b/brapp1/ps_output_b2b/RiskMgmt/NewClient
+   writable = yes
+   write list = @FS_Samba_AllAccess, @FIN-RiskOperations 
+   force user = psoft
+   force group = psoft
+   # This share is audited
+   vfs objects = extd_audit
+[prod_ps_output_hrprod]
+	comment = PROD app server access for ps_output/hrprod
+	valid users = @FS_Samba_AllAccess,@fs_samba_prod_ps_output_hrprod_ro,@access_it_application_support
+        writeable = no
+	path = /nfs/prod/app/ps_output_hrprod
+[prod_ps_input]
+	vfs objects = extd_audit
+	valid users = @access_it_application_support,@access_it_qa,@access_it_rm_serviceops,@access_fin_bi_pm,@fs_samba_prod_app_ro,@fs_samba_prod_app_full,@FS_Samba_Prod_ps_input_RO,@QE-ALL,@FS_Samba_AllAccess,@FS_Samba_Prod_ps_input_Full,@fs_samba_prod_app_full,@serviceops-tmt
+	writeable = no
+	write list = @FS_Samba_AllAccess,@FS_Samba_Prod_ps_input_Full,@fs_samba_prod_app_full,@serviceops-tmt
+	path = /nfs/prod/app/ps_input
+	force group = psoft
+	force user = psoft
+	comment = PROD app server access for ps_input
+	available = yes
+   # This share is audited
+[prod_app_homes]
+	comment = PROD app server access for Application Support Teams
+	valid users = @access_it_app_admin,@access_it_ops_unix,@access_it_application_support,@unix_db_team,@access_it_qa,@access_it_rm_serviceops,@access_fin_bi_pm,@fs_samba_prod_app_ro,@fs_samba_prod_app_full,@IT-ApplicationSupport,@QE-ALL,@SW-tacticals
+        writeable = no
+	path = /nfs/prod/app_home
+[MEDSTAT]
+	vfs objects = extd_audit
+	valid users = @fs_samba_prod_medstat_ro,@FS_Samba_AllAccess,@access_it_app_admin,@access_it_ops_unix,@access_it_application_support,@unix_db_team,@access_it_rm_serviceops,@access_benefits_management_group,@access_it_data_integration
+	writeable = no
+	write list = @FS_Samba_AllAccess,@access_it_app_admin,@access_it_ops_unix,@access_it_application_support,@unix_db_team,@access_it_rm_serviceops,@access_benefits_management_group,@access_it_data_integration
+	path = /nfs/diprod/db_output/MEDSTAT
+	force group = dba
+	comment = MEDSTAT under DB_OUTPUT (DIPROD)
+	available = yes
+   # This share is audited
+[MEDSTAT_test]
+	vfs objects = extd_audit
+	writeable = yes
+	write list = @FS_Samba_AllAccess,@fs_samba_medstat_test_full
+	path = /nfs/diprod/db_output/MEDSTAT/test
+	force group = dba
+	comment = Developer acccess to MEDSTAT/test under DB_OUTPUT (DIPROD)
+	available = yes
+   # This share is audited
+[cognos_dev]
+	copy = nonprod
+        writeable = no
+	comment = Developer access to cognos_dev
+	read list = @access_it_ops_unix,@access_it_app_admin,@access_it_application_support,@unix_db_team,@access_it_application_development,@access_it_data_integration,@it-webdevteam
+	path = /nfs/cognos/
+	available = yes
+[dev_ps_input]
+   comment = Developer access to ps_input on PROD
+   path = /nfs/prod/app/ps_input
+   copy = prod_4dev
+   available = yes
+#[dev_ps_output_b2b]
+#   comment = Developer access to ps_output/b2b on PROD
+#   path = /nfs/prod/app/b2b
+#   copy = prod_4dev
+#   available = yes
+[dev_RP_deployment_DEV]
+	force user = wls12
+	follow symlinks = yes
+	comment = Developer access to c10_64/deployment on slrpappd1
+	valid users = @FS_Samba_AllAccess,@FS_Samba_Dev_Reporting_RO,@it-dataintegration
+	path = /net/slrpappd1/apps/cognos/c10_64/deployment
+	force group = apps
+[dev_EA_AdminServer_logs_DEV]
+   comment = Developer access to eja_domain/servers/AdminServer/logs on sleaappd1
+   path = /nfs/dev/ea/sleaappd1/eja_domain/servers/AdminServer/logs
+   available = yes
+   valid users = @FS_Samba_AllAccess, @access_it_application_development, @fs_samba_dev_logs_full, @fs_samba_dev_logs_ro
+   force user = wls12
+   force group = apps
+   writable = no
+[dev_EA_trinet_conf_DEV]
+   comment = Developer access to eja_domain/trinet_conf on sleaappd1
+   path = /nfs/dev/ea/sleaappd1/eja_domain/trinet_conf
+   available = yes
+   copy = dev
+   force user = wls12
+   force group = apps
+   writable = yes
+[dev_EA_trinet_war_DEV]
+   comment = Developer access to eja_domain/trinet_war on sleaappd1
+   path = /nfs/dev/ea/sleaappd1/eja_domain/trinet_war
+   available = yes
+   copy = dev
+   force user = wls12
+   force group = apps
+   writable = yes
+   # This share is audited
+   vfs objects = extd_audit
+[dev_EA_AdminServer_logs_LITES]
+   comment = Developer access to eja_domain/servers/AdminServer/logs on sleaappls1
+   path = /nfs/dev/ea/sleaappls1/eja_domain/servers/AdminServer/logs
+   available = yes
+   valid users = @FS_Samba_AllAccess, @access_it_application_development, @fs_samba_dev_logs_full, @fs_samba_dev_logs_ro
+   force user = wls12
+   force group = apps
+   writable = no
+[dev_EA_trinet_conf_LITES]
+   comment = Developer access to eja_domain/trinet_conf on sleaappls1
+   path = /nfs/dev/ea/sleaappls1/eja_domain/trinet_conf
+   available = yes
+   copy = dev
+   force user = wls12
+   force group = apps
+   writable = yes
+[dev_EA_trinet_war_LITES]
+   comment = Developer access to eja_domain/trinet_war on sleaappls1
+   path = /nfs/dev/ea/sleaappls1/eja_domain/trinet_war
+   available = yes
+   copy = dev
+   force user = wls12
+   force group = apps
+   writable = yes
+   # This share is audited
+   vfs objects = extd_audit
+[dev_EA_AdminServer_logs_STAGES]
+   comment = Developer access to eja_domain/servers/AdminServer/logs on sleaappss1
+   path = /nfs/dev/ea/sleaappss1/eja_domain/servers/AdminServer/logs
+   available = yes
+   valid users = @FS_Samba_AllAccess, @access_it_application_development, @fs_samba_dev_logs_full, @fs_samba_dev_logs_ro
+   force user = wls12
+   force group = apps
+   writable = no
+[dev_EA_trinet_conf_STAGES]
+   comment = Developer access to eja_domain/trinet_conf on sleaappss1
+   path = /nfs/dev/ea/sleaappss1/eja_domain/trinet_conf
+   available = yes
+   copy = dev
+   force user = wls12
+   force group = apps
+   writable = yes
+[dev_EA_trinet_war_STAGES]
+   comment = Developer access to eja_domain/trinet_war on sleaappss1
+   path = /nfs/dev/ea/sleaappss1/eja_domain/trinet_war
+   available = yes
+   copy = dev
+   force user = wls12
+   force group = apps
+   writable = yes
+   # This share is audited
+   vfs objects = extd_audit
+## New EA shares
+[dev_EA_trinet]
+	vfs objects = extd_audit
+	writeable = yes
+	write list = @access_it_ops_unix,@access_it_application_development,@access_it_app_admin,@sw-tacticals
+	path = /nfs/ea/trinet
+	force group = apps
+	copy = dev 
+	force user = wls12
+	comment = Developer access to trinet_war and trinet_conf
+	available = yes
+   # This share is audited
+
+[dev_EA_AdminServer]
+	read list = @FS_Samba_AllAccess,@access_it_application_development,@fs_samba_dev_logs_full,@fs_samba_dev_logs_ro
+	path = /nfs/ea/AdminServer
+	force group = apps
+	force user = wls12
+	comment = Developer access to eja_domain/servers/AdminServer/logs
+	available = yes
+
+[dev_EA_gateway_server]
+   comment = Developer access to gateway_server
+   path = /nfs/ea/gateway_server
+   available = yes
+   valid users = @FS_Samba_AllAccess, @access_it_application_development, @fs_samba_dev_logs_full, @fs_samba_dev_logs_ro
+   force user = wls12
+   force group = apps
+   writable = no
+
+[dev_EA_hrp_server_logs]
+	valid users = @FS_Samba_AllAccess,@access_it_application_development,@fs_samba_dev_logs_full,@fs_samba_dev_logs_ro
+	read list = @FS_Samba_AllAccess,@access_it_application_development,@fs_samba_dev_logs_full,@fs_samba_dev_logs_ro
+	path = /nfs/ea/hrp_server
+	force group = apps
+	force user = wls12
+	comment = Developer access to eja_domain/servers/hrp_server1/logs
+	available = yes
+[winbind]
+	valid users = @fs_samba_allaccess
+        writeable = no
+	path = /winbind
+[brio_zip_archive]
+	comment = Brio ZIP files from old Reports server
+	valid users = @asc-all,@it-microsoft.infrastructure.team,@fs_samba_allaccess,@serviceops-implementation,@it-hdops,@it-applicationsupport,@it-rm.group
+        writeable = no
+	path = /brio_zip
+
+[dev_EJAPP_logs]
+   comment = Developer access to EJAPP Servers
+   path = /nfs/ejapp
+   available = yes
+   valid users = @FS_Samba_AllAccess, @it-appdevcrm, @it-appdevpeoplesoft, @it-webdevteam
+   force user = wls12
+   force group = apps
+   writable = no
+
